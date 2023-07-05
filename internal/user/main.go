@@ -2,20 +2,17 @@ package user
 
 import (
 	"context"
+	"errors"
 
-	"github.com/artHouse-Docs/backend/pkg/config"
 	db "github.com/artHouse-Docs/backend/pkg/database"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func NewUserCollenction() (coll *mongo.Collection, err error) {
-	cfg := config.Configure()
-
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	client, err := db.NewClient(ctx, cfg.Database.Host, cfg.Database.Port, cfg.Database.Username, cfg.Database.Password)
+func NewUserCollenction(ctx context.Context) (coll *mongo.Collection, err error) {
+	coll, err = db.NewCollection(ctx, "users")
 	if err != nil {
-		return nil, err
+		return nil, errors.New("database unavaliable")
 	}
-	return db.NewCollection(ctx, client, "users"), nil
+
+	return coll, nil
 }

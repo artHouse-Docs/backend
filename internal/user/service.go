@@ -13,7 +13,7 @@ import (
 // handle request() {userId     register()}
 
 func (u *User) Register(ctx context.Context) (err error) {
-	coll, err := NewUserCollenction()
+	coll, err := NewUserCollenction(ctx)
 	if err != nil {
 		return errors.New("database unavaliable")
 	}
@@ -35,7 +35,7 @@ func (u *User) Register(ctx context.Context) (err error) {
 }
 
 func (u *User) Login(ctx context.Context) (result bool, err error) {
-	coll, err := NewUserCollenction()
+	coll, err := NewUserCollenction(ctx)
 	if err != nil {
 		return false, errors.New("database unavaliable")
 	}
