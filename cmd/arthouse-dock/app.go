@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -25,7 +26,7 @@ func InitServer(cfg config.ServerConfig) error {
 
 func main() {
 	srvCfg := config.Configure().Server
-
+	fmt.Println("Server is running on port", srvCfg.Port)
 	if err := InitServer(srvCfg); err != nil {
 		log.Panic(err)
 	}

@@ -20,9 +20,38 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 
 	err = user.Register(ctx)
 	if err != nil {
-		w.WriteHeader(http.StatusConflict)
-		return
+		switch err.Error() {
+		case "user email already exists":
+			w.WriteHeader(http.StatusConflict)
+			return
+		case "database unavailable":
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 	}
+
+	refreshCookie := http.Cookie{
+		Name:     "refreshToken",
+		Value:    user.RefreshToken,
+		Path:     "/",
+		MaxAge:   0,
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteLaxMode,
+	}
+
+	accessToken := http.Cookie{
+		Name:     "accessToken",
+		Value:    user.AccessToken,
+		Path:     "/",
+		MaxAge:   0,
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteLaxMode,
+	}
+
+	http.SetCookie(w, &refreshCookie)
+	http.SetCookie(w, &accessToken)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)

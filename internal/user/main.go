@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func NewUserCollenction(ctx context.Context) (coll *mongo.Collection, err error) {
+func NewUserCollection(ctx context.Context) (coll *mongo.Collection, err error) {
 	coll, err = db.NewCollection(ctx, "users")
 	if err != nil {
 		return nil, errors.New("database unavaliable")

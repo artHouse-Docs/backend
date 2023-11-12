@@ -11,4 +11,6 @@ type User struct {
 	Surname      string   `json:"surname" bson:"surname"`
 	PasswordHash string   `json:"password" bson:"password"`
 	Email        string   `json:"email" bson:"email"`
+	AccessToken  string   `json:"-" bson:"-"`
+	RefreshToken string   `json:"-" bson:"-"`
 }

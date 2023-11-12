@@ -8,8 +8,15 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func NewClient(ctx context.Context, host, port, username, password string) (*mongo.Database, error) {
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://"+username+":"+password+"@"+host+":"+port))
+type Database struct {
+	host     string
+	port     string
+	username string
+	password string
+}
+
+func (database *Database) NewClient(ctx context.Context) (*mongo.Database, error) {
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://"+database.username+":"+database.password+"@"+database.host+":"+database.port))
 	if err != nil {
 		return nil, err
 	}
@@ -20,14 +27,13 @@ func NewClient(ctx context.Context, host, port, username, password string) (*mon
 }
 
 func NewCollection(ctx context.Context, name string) (coll *mongo.Collection, err error) {
-	cfg := config.Configure()
+	cfg := config.Configure().Database
 
-	client, err := NewClient(ctx, cfg.Database.Host, cfg.Database.Port, cfg.Database.Username, cfg.Database.Password)
+	database := Database{cfg.Host, cfg.Port, cfg.Username, cfg.Password}
+	client, err := database.NewClient(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	db := client.Client().Database("main")
-
-	return db.Collection(name), nil
+	return client.Collection(name), nil
 }
